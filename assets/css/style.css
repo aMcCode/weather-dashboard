@@ -39,9 +39,10 @@ nav {
 
 #search-div {
     width: 30%;
+    margin-top: 10px;
 }
 
-#search-div h3 {
+h3 {
     font-weight: bold;
 }
 
@@ -50,22 +51,68 @@ form {
     flex-direction: column;
 }
 
+#searchTxt {
+    height: 45px;
+    margin-bottom: 15px;
+    border-width: 2px;
+    /* text-align: center; */
+    color: grey;
+    font-weight: bold;
+    border-radius: 7px;
+    padding: 7px;
+}
+
+#searchBtn {
+    height: 35px;
+    color: #EFEFEF;
+    border: none;
+    background-color: #5AA2E9;
+    border-radius: 7px;
+}
+
+hr {
+    border-top: 3px solid black;
+}
+
+#cityBtn {
+    height: 35px;
+    color: black;
+    border: none;
+    background-color: #B7B7B7;
+    border-radius: 7px;
+}
+
 .forcast-wrapper {
     width: 70%;
+    padding-right: 15px;
+}
+
+#current-forcast-div {
+    border-style: solid;
+    margin-top: 10px;
 }
 
 #daily-forcast-div {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-wrap: wrap;
     width: 100%;
     padding: 0;
+    margin-top: 10px;
 }
 
-.daily-div {
-    /* border-style: solid; */
-    width: 18%;
+.wide-card {
+    padding: 5px;
+}
+
+.daily-card {
+    width: 19%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     background-color: #2b2070;
     color: white;
+    padding: 7px;
+    text-align: left;
+    font-weight: bold;
+    letter-spacing: 1px;
+    
 }
