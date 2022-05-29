@@ -116,3 +116,23 @@ hr {
     letter-spacing: 1px;
     
 }
+
+.low {
+    background-color: rgb(125, 207, 125);
+}
+
+.moderate {
+    background-color: rgb(235, 235, 8);
+}
+
+.high {
+    background-color: rgb(218, 155, 38);
+}
+
+.veryHigh {
+    background-color: rgb(217, 102, 102);
+}
+
+.extreme {
+    background-color: rgb(240, 48, 240);
+}

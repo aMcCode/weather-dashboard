@@ -2,6 +2,7 @@
 
 
 * https://openweathermap.org/api/one-call-api
+* UV Index Source https://www.epa.gov/sites/default/files/documents/uviguide.pdf
 
 
 * AS A traveler<br />
