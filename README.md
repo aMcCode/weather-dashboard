@@ -1,26 +1,23 @@
 # Weather Dashboard
 
+This app allows a user to retrieve the current forcast and 5-day forcast for any city in the world. The app saves the previous 3 searches the user has made, adding the most recent search to the top of the list.
 
-* https://openweathermap.org/api/one-call-api
+![Alt text](assets/images/weatherAppMockup.png?raw=true "App Mockup")
+
+# API Calls
+* https://api.openweathermap.org/data/2.5/weather
+* https://api.openweathermap.org/data/2.5/forecast
+* https://api.openweathermap.org/data/2.5/onecall
+* http://openweathermap.org/img/w/
+
+# Resources
 * UV Index Source https://www.epa.gov/sites/default/files/documents/uviguide.pdf
 
+# Future Enhancements 
+* Only store and present sucessful search results as previous searches
+* Display forcast for most recent search or current location on app open or where a given search request is invalid
+* refactor the code so less is managed with click event and so less code is repeated for new and previous search buttons
+* Use modals instead of alerts to display errors.
+* find prettier images
+* improve the wrap for 5-day forcast by transforming daily cards so they are wider when displayed on smaller viewports.
 
-* AS A traveler<br />
-I WANT to see the weather outlook for multiple cities<br />
-SO THAT I can plan a trip accordingly
-
-
-# Acceptance Criteria
-GIVEN a weather dashboard with form inputs<br />
-* WHEN I search for a city
-THEN I am presented with current and future conditions for that city and that city is added to the search history
-* WHEN I view current weather conditions for that city<br />
-THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
-* WHEN I view the UV index<br />
-THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
-* WHEN I view future weather conditions for that city<br />
-THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, the wind speed, and the humidity
-* WHEN I click on a city in the search history<br />
-THEN I am again presented with current and future conditions for that city
-#
-![Alt text](assets/images/weatherAppMockup.png?raw=true "App Mockup")

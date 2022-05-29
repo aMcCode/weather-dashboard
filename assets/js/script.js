@@ -1,5 +1,5 @@
 let requestedCity;
-let weatherURL, forecastURL, oneCallURL /*, positionURL*/;
+let weatherURL, forecastURL, oneCallURL;
 let iconURL = "http://openweathermap.org/img/w/";
 let city, lat, lon;
 let fullWeatherFile;
@@ -11,6 +11,7 @@ let storedSearchObj = storedSearches ? storedSearches : [];
 let searchDiv = $("#search-div");
 let prevSearchDiv;
 
+//#region load prev 3 searches
 if (storedSearches) {
   searchDiv.append('<div id="prev-search-div" class="container"></div>');
   prevSearchDiv = $("#prev-search-div");
@@ -18,52 +19,57 @@ if (storedSearches) {
 }
 
 function createPrevSearchBtns(searchItm) {
-  prevSearchDiv.append(
-    `<button class="prev-search-btn" type="button">${searchItm}</button>`
-  );
+    prevSearchDiv.append(
+      `<button class="prev-search-btn" type="button">${searchItm}</button>`
+    );
 }
 
-let isGoodCityRequest = function (requestedCity) {
-  if (requestedCity) return true;
-  else return false;
-};
+//#endregion load prev 3 searches
 
+/* gets lat and lon from returned json and uses
+  that to call requested city data */ 
 function setPosition(jsonFile) {
   city = jsonFile.name;
   lat = jsonFile.coord.lat;
   lon = jsonFile.coord.lon;
 
   oneCallURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&appid=${weatherApiKey}`;
-  getOneFile(oneCallURL);
+  getRequestedData(oneCallURL);
 }
 
+/* returns uvi status which is used
+  to set <span> class for uvi-val.
+  CSS uses class to set span color */ 
 let get_UV_indicator = function (uvVal) {
   const valMap = {
-    Low: [0, 2],
-    Moderate: [3, 5],
-    High: [6, 7],
-    VeryHigh: [8, 10],
-    Extreme: [11, 99],
+    Low: [0, 3],
+    Moderate: [3, 6],
+    High: [6, 8],
+    VeryHigh: [8, 11],
+    Extreme: [11, 100],
   };
   let uvValue = parseFloat(uvVal);
   if (!uvValue && uvValue != 0) return;
-  if (uvValue >= valMap.Low[0] && uvValue <= valMap.Low[1]) return "low";
-  if (uvValue >= valMap.Moderate[0] && uvValue <= valMap.Moderate[1])
+  if (uvValue >= valMap.Low[0] && uvValue < valMap.Low[1]) return "low";
+  if (uvValue >= valMap.Moderate[0] && uvValue < valMap.Moderate[1])
     return "moderate";
-  if (uvValue >= valMap.High[0] && uvValue <= valMap.High[1]) return "high";
-  if (uvValue >= valMap.VeryHigh[0] && uvValue <= valMap.VeryHigh[1])
+  if (uvValue >= valMap.High[0] && uvValue < valMap.High[1]) return "high";
+  if (uvValue >= valMap.VeryHigh[0] && uvValue < valMap.VeryHigh[1])
     return "veryHigh";
-  if (uvValue >= valMap.Extreme[0] && uvValue <= valMap.Extreme[1])
+  if (uvValue >= valMap.Extreme[0] && uvValue < valMap.Extreme[1])
     return "extreme";
 };
 
+/* Using a returned jsonFile
+  creates wide-card(current forcast) and
+  daily-card divs w/ relevant child elements */
 function packageAndDisplayWeatherData(jsonFile) {
   let curDate = moment(new Date(jsonFile.current.dt * 1000)).format("L");
   let curIconURL = iconURL + jsonFile.current.weather[0].icon + ".png";
   let uvIndicator = get_UV_indicator(jsonFile.current.uvi);
   let text = `<div id="current-forcast-div" class="wide-card">
         <h3>${city} (${curDate})</h3>
-        <img src="${curIconURL}" alt="Icon depicting current weather.">
+        <img src="${curIconURL}" alt="Icon for current weather.">
         <p>Temp: ${jsonFile.current.temp} &deg;F</p>
         <p>Wind: ${jsonFile.current.wind_speed} MPH</p>
         <p>Humidity: ${jsonFile.current.humidity} %</p>
@@ -97,32 +103,43 @@ function packageAndDisplayWeatherData(jsonFile) {
   }
 }
 
+/* initial call for weather file, calls setPosition */
 function getWeatherFile(URL) {
-  fetch(URL)
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (myJson) {
+  fetch(URL).then((response) => response.json().then((myJson) => {
+    if (response.ok) {
       setPosition(myJson);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    }
+    else {
+      alert("Please enter a valid search item");
+    }
+  })
+  .catch((e) => {
+    console.log(e);
+    console.log("error");
+  }));
 }
 
-function getOneFile(URL) {
-  fetch(URL)
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (myJson) {
-      packageAndDisplayWeatherData(myJson);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+/* called from set position to get requested data file
+  passes file to packageAndDisplayWeatherData */
+function getRequestedData(URL) {
+  fetch(URL).then((response) =>
+    response
+      .json()
+      .then((myJson) => {
+        if (response.ok) packageAndDisplayWeatherData(myJson);
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      })
+  );
 }
 
+/* TO DO: Need to create a function or two
+  to cover most of what this click and
+  the prevSearchDiv click do.
+  Would like to find a way to exit a fetch or async w/o
+  continuing program execution. Out of time... */
 $("#searchBtn").click(function () {
   let curFcastDiv = document.getElementById("current-forcast-div");
   let dailyDiv = document.getElementById("daily-forcast-div");
@@ -134,28 +151,27 @@ $("#searchBtn").click(function () {
 
   const requestedCityInput = document.querySelector("#searchTxt");
   requestedCity = requestedCityInput.value;
-  let isGoodRequest = isGoodCityRequest(requestedCity);
-  if (isGoodRequest === true) {
     weatherURL = `https://api.openweathermap.org/data/2.5/weather?q=${requestedCity}&units=imperial&appid=${weatherApiKey}`;
     getWeatherFile(weatherURL);
-    forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${requestedCity}units=imperial&appid=${weatherApiKey}`;
+      forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${requestedCity}units=imperial&appid=${weatherApiKey}`;
 
-    if (!storedSearchObj.includes(requestedCity)) {
-      storedSearchObj.unshift(requestedCity);
+      if (!storedSearchObj.includes(requestedCity)) {
+        storedSearchObj.unshift(requestedCity);
 
-      if (storedSearchObj.length > 3) storedSearchObj.pop();
+        if (storedSearchObj.length > 3) storedSearchObj.pop();
 
-      localStorage.setItem("storedCities", JSON.stringify(storedSearchObj));
-      if (!prevSearchDiv)
-        searchDiv.append('<div id="prev-search-div" class="container"></div>');
+        localStorage.setItem("storedCities", JSON.stringify(storedSearchObj));
+        if (!prevSearchDiv)
+          searchDiv.append('<div id="prev-search-div" class="container"></div>');
 
-      prevSearchDiv = $("#prev-search-div");
-      prevSearchDiv.prepend(`<p id="${requestedCity}">${requestedCity}</p>`);
-      let pCount = $("#prev-search-div p").length;
-      if (pCount > 3) prevSearchDiv.children().last().remove();
-    }
+        prevSearchDiv = $("#prev-search-div");
+        prevSearchDiv.prepend(
+          `<button class="prev-search-btn" type="button">${requestedCity}</button>`
+        );
+        let btnCount = $("#prev-search-div button").length;
+        if (btnCount > 3) prevSearchDiv.children().last().remove();
+      }
     requestedCityInput.value = "";
-  }
 });
 
 prevSearchDiv.click(function (e) {
@@ -169,28 +185,30 @@ prevSearchDiv.click(function (e) {
     if (h3) document.getElementById("5dayH3").remove();
 
     requestedCity = e.target.innerHTML;
-    let isGoodRequest = isGoodCityRequest(requestedCity);
-    if (isGoodRequest === true) {
       weatherURL = `https://api.openweathermap.org/data/2.5/weather?q=${requestedCity}&units=imperial&appid=${weatherApiKey}`;
       getWeatherFile(weatherURL);
-      forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${requestedCity}units=imperial&appid=${weatherApiKey}`;
+            forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${requestedCity}units=imperial&appid=${weatherApiKey}`;
 
-      if (!storedSearchObj.includes(requestedCity)) {
-        storedSearchObj.unshift(requestedCity);
+            if (!storedSearchObj.includes(requestedCity)) {
+              storedSearchObj.unshift(requestedCity);
 
-        if (storedSearchObj.length > 3) storedSearchObj.pop();
+              if (storedSearchObj.length > 3) storedSearchObj.pop();
 
-        localStorage.setItem("storedCities", JSON.stringify(storedSearchObj));
-        if (!prevSearchDiv)
-          searchDiv.append(
-            '<div id="prev-search-div" class="container"></div>'
-          );
+              localStorage.setItem(
+                "storedCities",
+                JSON.stringify(storedSearchObj)
+              );
+              if (!prevSearchDiv)
+                searchDiv.append(
+                  '<div id="prev-search-div" class="container"></div>'
+                );
 
-        prevSearchDiv = $("#prev-search-div");
-        prevSearchDiv.prepend(`<p id="${requestedCity}">${requestedCity}</p>`);
-        let pCount = $("#prev-search-div p").length;
-        if (pCount > 3) prevSearchDiv.children().last().remove();
-      }
-    }
+              prevSearchDiv = $("#prev-search-div");
+              prevSearchDiv.prepend(
+                `<button class="prev-search-btn" type="button">${requestedCity}</button>`
+              );
+              let btnCount = $("#prev-search-div button").length;
+              if (btnCount > 3) prevSearchDiv.children().last().remove();
+            }
   }
 });

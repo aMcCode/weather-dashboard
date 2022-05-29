@@ -16,6 +16,7 @@ body {
   font-size: 16px;
   line-height: 1;
   text-align: justify;
+
 }
 
 nav {
@@ -44,6 +45,8 @@ nav {
 
 h3 {
     font-weight: bold;
+    font-size: 3.25vw;
+    text-align: left;
 }
 
 form {
@@ -98,22 +101,27 @@ hr {
     flex-wrap: wrap;
     width: 100%;
     padding: 0;
-    margin-top: 10px;
+    margin: 10px 20px 0 0;
 }
 
 .wide-card {
     padding: 5px;
+    margin-right: 20px;
 }
 
 .daily-card {
     width: 19%;
+    min-width: 85px;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     background-color: #2b2070;
     color: white;
     padding: 7px;
+    margin-bottom: 7px;
     text-align: left;
     font-weight: bold;
     letter-spacing: 1px;
+    font-size: calc(8px + .75vw);
+    
     
 }
 
@@ -135,4 +143,21 @@ hr {
 
 .extreme {
     background-color: rgb(240, 48, 240);
+}
+
+#prev-search-div {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.prev-search-btn {
+    height: 35px;
+    color: black;
+    font-weight: bold;
+    border: 1px solid;
+    background-color: rgb(172, 165, 165);
+    border-radius: 7px;
+    margin-bottom: 8px;
+    text-transform: capitalize;
 }
